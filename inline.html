@@ -10,11 +10,11 @@
 	clinAppsButton.onclick=function(){
 		chrome.webstore.install(
 			'',
-			function(){ //successCallback
-				console.log(':-)')
+			function(x){ //successCallback
+				console.log(':-)',x)
 			}, 
-			function(){ //failureCallback
-				console.log(':-(')
+			function(x){ //failureCallback
+				console.log(':-(',x)
 			}		
 		)
 	}
