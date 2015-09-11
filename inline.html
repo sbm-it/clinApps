@@ -4,6 +4,22 @@
 <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/hemnncmjimcaifndieenemnlcfdcjang">
 </head>
 <body>
-	this should open clinApps from chrome appStore 
+	<button id="clinAppsButton">Stony Brook ClinApps</button>
+
+	<script>
+	clinAppsButton.onclick=function(){
+		chrome.webstore.install(
+			'',
+			function(){ //successCallback
+				console.log(':-)')
+			}, 
+			function(){ //failureCallback
+				console.log(':-(')
+			}		
+		)
+	}
+	
+
+	</script>
 </body>
 </html>
