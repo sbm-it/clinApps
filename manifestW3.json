@@ -20,5 +20,5 @@
         "sizes": "331x87"
       }],
   "start_url": "https://sbu-bmi.github.io/clinApps/index.html",
-  "display": "standalone"
+  "display": "fullscreen"
 }
