@@ -6,7 +6,10 @@
         "src": "shield48.png",
         "sizes": "48x48",
       },{
-        "src": "shield128.png",
+        "src": "clinApps96.png",
+        "sizes": "96x96",
+      },{
+        "src": "clinApps128.png",
         "sizes": "128x128",
       }],
   "splash_screens": [{
@@ -16,5 +19,6 @@
         "src": "clinApps2.png",
         "sizes": "331x87"
       }],
-  "start_url": "https://sbu-bmi.github.io/clinApps/index.html"
+  "start_url": "https://sbu-bmi.github.io/clinApps/index.html",
+  "display": "standalone"
 }
