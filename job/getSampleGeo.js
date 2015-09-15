@@ -2,7 +2,8 @@ console.log('getSampleGeo.js loaded')
 
 // get JSON data
 
-$.getJSON('/sample%20data/physicianListing.json')
+//$.getJSON('clinApps/sample%20data/physicianListing.json')
+$.getJSON('https://sbu-bmi.github.io/clinApps/sample%20data/physicianListing.json')
  .then(function(x){
      xx=x
      // adr = xi.address1+', '+xi.address2+', '+xi.city+', '+xi.state+xi.zipcode
@@ -42,4 +43,5 @@ $.getJSON('/sample%20data/physicianListing.json')
 
  })
 
-4
+// When it's dne do something like
+// jmat.saveFile(JSON.stringify(xx,null,3),'physicianListingGEO.json')
