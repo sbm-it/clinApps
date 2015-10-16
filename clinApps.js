@@ -62,3 +62,5 @@ clinApps.hashJobs=function(suf){ // perform jobs submited within the hash, i.e. 
 $( document ).ready(function() {
     clinApps()
 });
+
+console.log('Hi Maggie')
