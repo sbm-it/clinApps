@@ -8,22 +8,22 @@ clinApps= function(){
 
 clinApps.setMsg=function(){
     if(typeof(clinAppsMsg)==="object"){
-        clinAppsMsg.innerHTML='<input id="arrowType" type="button" value="<" style="background:rgba(0,0,0,0);border-width:0"> &nbsp; <input id="radioOperations" type="radio"><span id="spanOperations"> Operations &nbsp;</span> <input id="radioResearch" type="radio"><span id="spanResearch"> Research &nbsp;</span> <input id="radioDSRIP" type="radio"><span id="spanDSRIP"> DSRIP &nbsp;</span> <input id="radioPatient" type="radio"><span id="spanPatient"> Patient &nbsp;</span> <span id="spanOptions" hidden="true"> ... more options show up here</span>'
+        clinAppsMsg.innerHTML='<input id="showMsgType" type="button" value="-" style="background:rgba(0,0,0,0);border-width:0"> &nbsp; <input id="radioOperations" type="radio"><span id="spanOperations"> Operations &nbsp;</span> <input id="radioResearch" type="radio"><span id="spanResearch"> Research &nbsp;</span> <input id="radioDSRIP" type="radio"><span id="spanDSRIP"> DSRIP &nbsp;</span> <input id="radioPatient" type="radio"><span id="spanPatient"> Patient &nbsp;</span> <span id="msgSpan" hidden="true"> loading ...</span>'
         // wiring events
-        arrowType.onclick=function(){
-            if(arrowType.value=='<'){
-                arrowType.value='>'
-                arrowType.style.color="blue"
+        showMsgType.onclick=function(){
+            if(showMsgType.value=='-'){
+                showMsgType.value='+'
+                showMsgType.style.color="blue"
                 radioOperations.hidden=spanOperations.hidden=radioResearch.hidden=spanResearch.hidden=radioResearch.hidden=radioDSRIP.hidden=spanDSRIP.hidden=radioPatient.hidden=spanPatient.hidden=true
-                spanOptions.hidden=false
+                msgSpan.hidden=false
             }else{
-                arrowType.value='<'
-                arrowType.style.color="black"
+                showMsgType.value='-'
+                showMsgType.style.color="black"
                 radioOperations.hidden=spanOperations.hidden=radioResearch.hidden=spanResearch.hidden=radioResearch.hidden=radioDSRIP.hidden=spanDSRIP.hidden=radioPatient.hidden=spanPatient.hidden=false
-                spanOptions.hidden=true
+                msgSpan.hidden=true
             }
-
         }
+        showMsgType.click()
     }
 }
 
@@ -63,4 +63,4 @@ $( document ).ready(function() {
     clinApps()
 });
 
-console.log('Hi Maggie')
+//console.log('Hi Maggie')
