@@ -1,0 +1,8 @@
+[
+	{
+		"name":"referral",
+		"description":"SBM physician referral",
+		"icon":"app/referral.png",
+		"onclick":"app/referral.js"
+	}
+]
