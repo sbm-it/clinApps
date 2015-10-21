@@ -1,8 +1,8 @@
 [
 	{
-		"name":"referral",
+		"name":"findadoc",
 		"description":"SBM physician referral",
-		"icon":"app/referral.png",
-		"onclick":"app/referral.js"
+		"icon":"app/findadoc.png",
+		"onclick":"app/findadoc.js"
 	}
 ]

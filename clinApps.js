@@ -6,12 +6,13 @@ clinApps= function(){
     clinApps.msg('loading apps ...')
     clinApps.getHash()
 }
+clinApps.app={} // store app specific material here
 
 // plain message writter
 clinApps.msg=function(txt,clr){
     if(!clr){clr='blue'}
     clinAppsMsg.style.color=clr
-    clinAppsMsg.innerHTML='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+txt
+    clinAppsMsg.innerHTML='<i class="fa fa-home" id="msgIcon" style="font-size:50px;color:maroon" onclick="clinApps.loadApps()"></i>&nbsp;&nbsp;'+txt
     /*
     var i=0,t=5
     clinApps.msg.int = setInterval(function(){
@@ -27,12 +28,16 @@ clinApps.msg=function(txt,clr){
 
 // load apps
 clinApps.loadApps=function(){
+    if(document.getElementById('msgIcon')){
+        msgIcon.className="fa fa-home"
+    }    
     appSpace.innerHTML='' // clean it first
     // load json manifest
     $.getJSON('app/apps.json',function(x){
         x.forEach(function(xi){
             clinApps.assembleApp(xi)
         })
+        clinApps.msg('list of subscribed Apps','green')
     })
 }
 
@@ -63,48 +68,8 @@ clinApps.getScript=function(src){ // like $.getScript but loads it into the head
     document.head.appendChild(s)
 }
 
-clinApps.getSbmDoctors=function(fun){ // get SBM doctors
-    if(!fun){fun=function(){console.log(clinApps.getSbmDoctors.docs)}}
-    localforage.getItem('SBMdocs_1').then(function(docs){
-        if(true){
-        //if(!docs){
-            var url='http://findadoc.uhmc.sunysb.edu/sbmed/jsonp.cfm?thisPage='
-            var i = 1
-            var docs=[]
-            jsonpCallback=function(x){
-                x.forEach(function(xi){
-                    if(xi.PICTURE==="NONE"){
-                        xi.PICTURE='http://www.stonybrookmedicine.edu/webfiles/physician-pics/placeholder.png'
-                    }else{
-                        xi.PICTURE='http://www.stonybrookmedicine.edu/webfiles/physician-pics/'+xi.PICTURE
-                    }                    
-                    docs.push(xi)
-                })
-                i++
-                console.log(i+': '+x.length)
-                clinApps.msg(' loading info on '+docs.length+' physicians','red')
-                if(x.length>0){
-                    getDoc(i)
-                }else{
-                    clinApps.msg(' loaded info on '+docs.length+' physicians','green')
-                    clinApps.getSbmDoctors.docs=docs
-                    localforage.setItem('SBMdocs',clinApps.getSbmDoctors.docs).then(function(){
-                        localStorage.setItem('SBMdocs',new Date())
-                        fun()
-                    })
-                }        
-            }
-            var getDoc=function(i){
-                $.getScript(url+i,function(x){
-                    4
-                })
-            }
-            getDoc(i) // starts here
-        }else{
-            clinApps.getSbmDoctors.docs=docs
-            fun()
-        }
-    })
+clinApps.getJSON=function(uri,fun){ // try localfrage first, if it fails, it tries localforage/
+    
 }
 
 // ini
@@ -112,10 +77,6 @@ $( document ).ready(function() {
     clinApps()
 });
 
-/*
-Notes:
+// MIS
 
-opt=&ins=&loc=&lang=29&gen=&nm=&cn=&zip=&radius=
-opt=&ins=&loc=&lang=29&gen=&nm=&cn=&zip=&radius=
-
-*/
+//done=function(x){console.log('loaded '+x.length)}

@@ -1,10 +1,16 @@
-console.log('referral.js')
+console.log('findadoc.js')
 
 appSpace.innerHTML='loading ... '
 
-// get physitian data
+// get physician data
 
-$.getJSON('data/physicianListing.json',function(x){
+clinApps.app.findadoc
+
+
+
+
+/*
+$.getJSON('data/SBMdocs.json',function(x){
     clinApps.msg('Loaded data on '+x.length+' physicians','green')
     var h = '<h3 style="color:maroon">Referrals</h3>'
     h += '<table>'
@@ -30,3 +36,5 @@ $.getJSON('data/physicianListing.json',function(x){
 
 
 })
+
+*/
