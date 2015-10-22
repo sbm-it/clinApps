@@ -2,7 +2,7 @@
 	{
 		"name":"findadoc",
 		"description":"SBM physician referral",
-		"icon":"app/findadoc.png",
+		"icon":"app/findadoc2.png",
 		"onclick":"app/findadoc.js"
 	}
 ]

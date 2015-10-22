@@ -1,13 +1,181 @@
 console.log('findadoc.js')
 
-appSpace.innerHTML='loading ... '
-
 // get physician data
 
-clinApps.app.findadoc
+clinApps.app.findadoc={
+    fun:{}
+}
+
+clinApps.app.findadoc.fun=function(){ // find a doc action
+    msgIcon.className="fa fa-user-md"
+    appSpace.innerHTML='loading find-a-doc ... '
+    
+    return true
+}()
+
+
+// extensions on clinApps root
+
+clinApps.app.findadoc.fun=(function(){
+
+    clinApps.getSbmDoctors=function(fun){ // get SBM doctors
+        if(!fun){fun=function(){console.log(clinApps.getSbmDoctors.docs)}}
+        localforage.getItem('SBMdocs').then(function(docs){
+            if(true){
+            //if(!docs){
+                var url='http://findadoc.uhmc.sunysb.edu/sbmed/jsonp.cfm?thisPage='
+                var i = 1
+                var docs=[]
+                jsonpCallback=function(x){ // ught! this jsonp service doesn't respond to the callback parameter :-('
+                    x.forEach(function(xi){
+                        //if(!xi.PICTURE.match(/\.jpg/i)){
+                        //    xi.PICTURE='http://www.stonybrookmedicine.edu/webfiles/physician-pics/placeholder.png'
+                        //}else{
+                        //    xi.PICTURE='http://www.stonybrookmedicine.edu/webfiles/physician-pics/'+xi.PICTURE
+                        //}                    
+                        docs.push(xi)
+                    })
+                    i++
+                    console.log(i+': '+x.length)
+                    clinApps.msg(' loading basic info on '+docs.length+' physicians','red')
+                    if(x.length>0){
+                        getDoc(i)
+                    }else{
+                        clinApps.msg(' loaded basic info on '+docs.length+' physicians','green')
+                        // loading detailed data for each of them now
+                        clinApps.getSbmDoctors.docs=docs
+                        var j = 0
+                        var funj = function(){ // updates basic info in jth entry of clinApps.getSbmDoctors.docs                     
+                            if(j<clinApps.getSbmDoctors.docs.length){
+                                j++
+                                clinApps.getOneSbmDoc(j-1,funj)
+                            }else{ // done updating
+                                localforage.setItem('SBMdocs',clinApps.getSbmDoctors.docs).then(function(){
+                                    localStorage.setItem('SBMdocs',new Date())
+                                    clinApps.msg(' loaded detailed info on '+docs.length+' SBM physicians','green')
+                                    fun()
+                                })
+                            }
+                        }
+                        clinApps.getOneSbmDoc(j,funj)       
+                    }        
+                }
+                var getDoc=function(i){
+                    $.getScript(url+i,function(x){
+                        4
+                    })
+                }
+                getDoc(i) // starts here
+            }else{
+                clinApps.getSbmDoctors.docs=docs
+                fun()
+            }
+        })
+    }
+
+    clinApps.getOneSbmDoc=function(i,fun){ // get info on the ith SBM doc
+        if(!fun){fun=function(y){console.log(i,y)}}
+        var url='http://findadoc.uhmc.sunysb.edu/fadp/fadprofile-drupal.asp?pid='
+        var xi = clinApps.getSbmDoctors.docs[i]
+        jsonpCallback=function(xj){ // same ugly frozen jsonp callback :-(
+            Object.getOwnPropertyNames(xj[0]).forEach(function(p){
+                xi[p]=xj[0][p]
+                if(xi.PICTURE.match(/\.jpg/i)){
+                    xi.PICTURE='http://www.stonybrookmedicine.edu/webfiles/physician-pics/placeholder.png'
+                }
+                clinApps.getSbmDoctors.docs[i]=xi
+            })
+            //console.log(i,xi)
+            clinApps.msg(i+'/'+clinApps.getSbmDoctors.docs.length+': loading on Dr '+xi.LASTNAME+', '+xi.FIRSTNAME)
+            fun(xi)
+        }
+        if((xi.ID!=='1901')&&(xi.ID!=='1902')&&(xi.ID!=='1865')&&(xi.ID!=='1848')){ // #72 last time I checked
+            $.getScript(url+xi.ID)
+        }else{
+            console.log('see https://github.com/sbm-it/clinApps/issues/2')
+            fun(xi)
+        }
+    }
+
+    clinApps.getSbmDoctors.geocode=function(){ // geocode docs in clinApps.getSbmDoctors.docs
+        clinApps.getSbmDoctors.docs.forEach(function(d,i){
+            if(d.LOCATION){
+                var loc = d.LOCATION.match(/https:\/\/www.google.com\/maps\/place\/[^" ]+/g)
+                if(loc){
+                    d.mapAddress=loc[0].replace('https://www.google.com/maps/place/','')
+                    clinApps.getSbmDoctors.docs[i]=d
+                    // get geocode
+                    if(true){
+                    if(!d.geoloc){
+                        $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address='+d.mapAddress)
+                        .then(function(g){
+                            console.log('trying:',i,d,g)
+                            if(g.status=='OK'){
+                                var res=g.results[0]
+                                if(res.geometry){
+                                    d.geoloc=res.geometry.location
+                                    clinApps.getSbmDoctors.docs[i]=d
+                                }else{
+                                    console.log('no geometry: ',i,d)
+                                }
+                            }else{
+                                console.log('Gmaps error: ',i,g.status)
+                                // let's not quit just yet
+                                // d.mapAddress.slice(d.mapAddress.indexOf(',')+1)
+                                $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address='+d.mapAddress.slice(d.mapAddress.indexOf(',')+1))
+                                 .then(function(g){
+                                    console.log('trying again:',i,d,g)
+                                    if(g.status=='OK'){
+                                        var res=g.results[0]
+                                        if(res.geometry){
+                                            d.geoloc=res.geometry.location
+                                            clinApps.getSbmDoctors.docs[i]=d
+                                        }else{
+                                            console.log('no geometry: ',i,d)
+                                        }
+                                    }
+                                  })
+                                  .fail(function(err){
+                                      throw('final failure ',i,d,g)
+                                  })
+                           }                    
+                        })
+                        .fail(function(err){
+                            console.log('failure',i,d,g)
+                        })
+                    }else{
+                        console.log('done already: ',i)
+                    }
+
+                    }                           
+                }
+            }
+        })
+    }
 
 
 
+
+    
+    var lala = 9
+    return true
+})()
+
+if(false){
+    localforage.getItem('SBMdocs').then(function(x){
+        clinApps.getSbmDoctors.docs=x;
+        console.log('loaded '+x.length+ 'SBM docs')
+        clinApps.getSbmDoctors.geocode()
+    })
+}
+
+if(false){
+    localforage.getItem('SBMdocs')
+    .then(function(x){
+        clinApps.getSbmDoctors.docs=x;
+        console.log('loaded '+x.length+ ' SBM docs')
+    })
+}
 
 /*
 $.getJSON('data/SBMdocs.json',function(x){
