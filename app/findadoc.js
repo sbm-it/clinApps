@@ -16,11 +16,52 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
         clinApps.app.findadoc.docs=x
         // assemble UI
         var h = '<table>'
-        h += '<tr><td><h4 style="color:maroon">Speciality</h4></td id="speciality"><td></td></tr>'
-        h += '<tr><td><h4 style="color:maroon">Insurance</h4></td><td id="insurance"></td></tr>'
-        h += '<tr><td><h4 style="color:maroon">Location</h4></td><td id="location"></td></tr>'
+        h += '<tr><td><h4 style="color:maroon">Speciality</h4></td><td id="speciality"><select id="specialitySelect"></select></td></tr>'
+        h += '<tr><td><h4 style="color:maroon">Insurance</h4></td><td id="insurance">...</td></tr>'
+        h += '<tr><td><h4 style="color:maroon">Location</h4></td><td id="location">...</td></tr>'
         h += '</table>'
         appSpace.innerHTML=h
+        // digest data
+        clinApps.app.findadoc.tab={}
+        var parms = Object.getOwnPropertyNames(clinApps.app.findadoc.docs[0])
+        parms.forEach(function(p){
+            clinApps.app.findadoc.tab[p]=[]
+            clinApps.app.findadoc.docs.forEach(function(d,i){
+                clinApps.app.findadoc.tab[p][i]=d[p]
+            })            
+        })
+        // prepare indexes
+        clinApps.app.findadoc.Ind={
+            Speciality:{},
+            Insurance:{},
+            Location:{}
+        }
+        var trailBlank=function(str){ // remove trailing blank
+            if(str.slice(-1)==" "){
+                return trailBlank(str.slice(0,-1))
+            }else{
+                return str
+            }
+        }
+        // Index Speciality first
+        setTimeout(function(){
+            var allVals=[]
+            clinApps.app.findadoc.tab.CERT.forEach(function(c){
+                c.split('<br>').forEach(function(ci){
+                    allVals.push(trailBlank(ci))
+                })
+            })
+            clinApps.app.findadoc.Ind.Speciality=jmat.unique(allVals).sort().slice(1)
+            clinApps.app.findadoc.Ind.Speciality.forEach(function(s){
+                var op = document.createElement('option')
+                op.textContent=s
+                specialitySelect.appendChild(op)
+            })
+            
+
+        },10) 
+
+
         
 
 
