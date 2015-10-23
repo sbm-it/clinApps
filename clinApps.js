@@ -3,41 +3,35 @@ console.log('clinApps.js loaded')
 clinApps= function(){
     // ini
     clinApps.loadApps()
-    clinApps.msg('loading apps ...')
+    //clinApps.msg('loading apps ...')
     clinApps.getHash()
+    //clinAppsMsg.hidden=true
 }
 clinApps.app={} // store app specific material here
 
 // plain message writter
 clinApps.msg=function(txt,clr){
-    if(!clr){clr='blue'}
+    if(!clr){clr='maroon'}
     clinAppsMsg.style.color=clr
-    clinAppsMsg.innerHTML='<i class="fa fa-home" id="msgIcon" style="font-size:50px;color:maroon" onclick="clinApps.loadApps()"></i>&nbsp;&nbsp;'+txt
-    /*
-    var i=0,t=5
-    clinApps.msg.int = setInterval(function(){
-        if(i<txt.length)
-        clinAppsMsg.textContent+=txt[i]
-        i++
-    },t)
-    setTimeout(function(){
-        clearInterval(clinApps.msg.int)
-    },t*txt.length*2)
-    */
+    clinAppsMsg.innerHTML=txt
 }
 
 // load apps
 clinApps.loadApps=function(){
-    if(document.getElementById('msgIcon')){
-        msgIcon.className="fa fa-home"
-    }    
+    //if(document.getElementById('msgIcon')){
+    msgIcon.className="fa fa-home"
+    clinApps.msg('SBM App Store')
+    //} 
     appSpace.innerHTML='' // clean it first
     // load json manifest
     $.getJSON('app/apps.json',function(x){
-        x.forEach(function(xi){
+        clinApps.manif={}
+        x.forEach(function(xi,i){
+            clinApps.manif[xi.name]=xi
             clinApps.assembleApp(xi)
         })
-        clinApps.msg('list of subscribed Apps','green')
+        //clinApps.msg('SBM appstore','green')
+        clinAppsHead.hidden=false
     })
 }
 
@@ -68,8 +62,24 @@ clinApps.getScript=function(src){ // like $.getScript but loads it into the head
     document.head.appendChild(s)
 }
 
-clinApps.getJSON=function(uri,fun){ // try localfrage first, if it fails, it tries localforage/
-    
+clinApps.localforage=function(uri,fun){ // try localforage first, if it fails, it tries localforage/
+    if(!fun){fun=function(x){console.log('locaforaged:',x)}}
+    localforage.getItem(uri).then(function(x){
+        if(!x){
+            $.getJSON('localforage/'+uri+'.json')
+             .then(function(x){
+                 console.log('loading '+uri+' and caching from localforage/'+uri+'.json')
+                 localforage.setItem(uri,x)
+                    .then(function(x){
+                        console.log('saved '+x.length)
+                        fun(x)
+                    })
+            })
+        }else{
+            console.log('loading '+uri+' from cache')
+            fun(x)
+        }
+    })
 }
 
 // ini
