@@ -18,8 +18,9 @@
 </head>
 <body>
 	<div class="container" id="clinApps">
-		<h3 style="vertical-align:text-top"><img src="SBMed-logo.png" height="35px" onclick="clinApps.loadApps()"><a href="http://stonybrookmedicine.edu" target=_blank></a><i style="font-family:Palatino;color:maroon"> <a href="https://sbm-it.github.io/clinApps/toGit.html" target="_blank">clinApps <i class="fa fa-github-alt"></i></a></i></h3>
-		<p id="clinAppsMsg">loading ...</p>
+		<h3 style="vertical-align:text-top" id="clinAppsHead"><img src="SBMed-logo.png" height="35px" onclick="clinApps.loadApps()"><a href="http://stonybrookmedicine.edu" target=_blank></a><i style="font-family:Palatino;color:maroon"> <a href="https://sbm-it.github.io/clinApps/toGit.html" target="_blank">clinApps <i class="fa fa-github-alt"></i></a></i></h3>
+		<i class="fa fa-home" id="msgIcon" style="font-size:50px;color:maroon" onclick="clinApps.loadApps()"></i>
+		<span id="clinAppsMsg">SBM app store</span>
 		<hr>
 		<div id="appSpace"></div>
 		

@@ -7,9 +7,25 @@ clinApps.app.findadoc={
 }
 
 clinApps.app.findadoc.fun=function(){ // find a doc action
+    clinAppsHead.hidden=false
+    clinAppsMsg.hidden=false
     msgIcon.className="fa fa-user-md"
+    clinApps.msg(clinApps.manif.findadoc.description,'maroon')
     appSpace.innerHTML='loading find-a-doc ... '
-    
+    clinApps.localforage('SBMdocs',function(x){
+        clinApps.app.findadoc.docs=x
+        // assemble UI
+        var h = '<table>'
+        h += '<tr><td><h4 style="color:maroon">Speciality</h4></td id="speciality"><td></td></tr>'
+        h += '<tr><td><h4 style="color:maroon">Insurance</h4></td><td id="insurance"></td></tr>'
+        h += '<tr><td><h4 style="color:maroon">Location</h4></td><td id="location"></td></tr>'
+        h += '</table>'
+        appSpace.innerHTML=h
+        
+
+
+        4
+    })
     return true
 }()
 
@@ -28,11 +44,6 @@ clinApps.app.findadoc.fun=(function(){
                 var docs=[]
                 jsonpCallback=function(x){ // ught! this jsonp service doesn't respond to the callback parameter :-('
                     x.forEach(function(xi){
-                        //if(!xi.PICTURE.match(/\.jpg/i)){
-                        //    xi.PICTURE='http://www.stonybrookmedicine.edu/webfiles/physician-pics/placeholder.png'
-                        //}else{
-                        //    xi.PICTURE='http://www.stonybrookmedicine.edu/webfiles/physician-pics/'+xi.PICTURE
-                        //}                    
                         docs.push(xi)
                     })
                     i++
@@ -206,3 +217,5 @@ $.getJSON('data/SBMdocs.json',function(x){
 })
 
 */
+
+

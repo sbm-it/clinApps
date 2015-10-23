@@ -1,8 +1,9 @@
 [
 	{
 		"name":"findadoc",
-		"description":"SBM physician referral",
+		"description":"Find a Stony Brook Medicine Doctor",
 		"icon":"app/findadoc2.png",
-		"onclick":"app/findadoc.js"
+		"onclick":"app/findadoc.js",
+		"fa":"fa-user-md"
 	}
 ]
