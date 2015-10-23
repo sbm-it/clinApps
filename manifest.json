@@ -2,7 +2,7 @@
   "name": "clinApps",
   "description": "Clinical Apps from Stony Brook University's Medical Center",
   "version": "0.1",
-  "manifest_version": 2,
+  "manifest_version": 1,
   "app": {
     "background": {
       "scripts": ["background.js"]
