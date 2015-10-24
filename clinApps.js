@@ -74,7 +74,9 @@ clinApps.localforage=function(uri,fun){ // try localforage first, if it fails, i
                         console.log('saved '+x.length)
                         fun(x)
                     })
+                    .catch(function(err){alert(err)})
             })
+            
         }else{
             console.log('loading '+uri+' from cache')
             fun(x)
