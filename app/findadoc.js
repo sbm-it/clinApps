@@ -15,11 +15,14 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
     clinApps.localforage('SBMdocs',function(x){
         clinApps.app.findadoc.docs=x
         // assemble UI
-        var h = '<table>'
-        h += '<tr><td><h4 style="color:maroon">Speciality</h4></td><td id="speciality"><select id="specialitySelect"></select></td></tr>'
-        h += '<tr><td><h4 style="color:maroon">Insurance</h4></td><td id="insurance">...</td></tr>'
-        h += '<tr><td><h4 style="color:maroon">Location</h4></td><td id="location">...</td></tr>'
-        h += '</table>'
+        //var h = '<table>'
+        //h += '<tr><td><h4 style="color:maroon">Speciality</h4></td><td id="speciality"><select id="specialitySelect"></select></td></tr>'
+        //h += '<tr><td><h4 style="color:maroon">Insurance</h4></td><td id="insurance">...</td></tr>'
+        //h += '<tr><td><h4 style="color:maroon">Location</h4></td><td id="location">...</td></tr>'
+        //h += '</table>'
+        var h = '<h4 style="color:maroon">Speciality <select id="specialitySelect"></select></h4>'
+        h += '<h4 style="color:maroon">Insurance <select id="insuranceSelect"></select></h4>'
+        h += '<h4 style="color:maroon">Location <select id="locationSelect"></select></h4>'
         appSpace.innerHTML=h
         // digest data
         clinApps.app.findadoc.tab={}
