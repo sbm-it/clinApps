@@ -69,12 +69,18 @@ clinApps.localforage=function(uri,fun){ // try localforage first, if it fails, i
             $.getJSON('localforage/'+uri+'.json')
              .then(function(x){
                  console.log('loading '+uri+' and caching from localforage/'+uri+'.json')
-                 localforage.setItem(uri,x)
-                    .then(function(x){
-                        console.log('saved '+x.length)
-                        fun(x)
-                    })
-                    .catch(function(err){alert(err)})
+                 if((typeof(indexedDB)!="undefined")&(!localStorage.clinAppsNoLocalForage)){
+                    localforage.setItem(uri,x)
+                     .then(function(x){
+                         console.log('saved '+x.length)
+                         fun(x)
+                      })
+                     .catch(function(err){
+                         localStorage.setItem('clinAppsNoLocalForage',true)
+                      })
+                 }else{
+                     console.log('no indexedDB')
+                 }
             })
             
         }else{

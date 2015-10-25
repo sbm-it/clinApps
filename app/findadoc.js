@@ -20,10 +20,45 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
         //h += '<tr><td><h4 style="color:maroon">Insurance</h4></td><td id="insurance">...</td></tr>'
         //h += '<tr><td><h4 style="color:maroon">Location</h4></td><td id="location">...</td></tr>'
         //h += '</table>'
-        var h = '<h4 style="color:maroon">Speciality <select id="specialitySelect"></select></h4>'
-        h += '<h4 style="color:maroon">Insurance <select id="insuranceSelect"></select></h4>'
-        h += '<h4 style="color:maroon">Location <select id="locationSelect"></select></h4>'
+        var h = '<h4 style="color:maroon"><input type="radio" id="specialityRadio"> Speciality <select id="specialitySelect"></select></h4>'
+        h += '<h4 style="color:maroon"> <input type="radio" id="insuranceRadio"> Insurance <select id="insuranceSelect"></select></h4>'
+        h += '<h4 style="color:maroon"> <input type="radio" id="distanceRadio">By distance to Zip <input id="locationZip" size=5 style="color:navy"> <button id="locationCurrent" style="color:red">current</button></h4><span id="currentFormatedAddress"></span>'
         appSpace.innerHTML=h
+        var listDocs=function(){ // queries results
+            var speciality = specialitySelect.value
+            var insurance = insuranceSelect.value
+        }
+        locationCurrent.onclick=function(){
+            locationCurrent.disabled=true
+            locationCurrent.style.color='orange'
+            navigator.geolocation.getCurrentPosition(function(g){
+                locationCurrent.style.color='green'
+                clinApps.geo=g
+                locationCurrent.disabled=false
+                $.getJSON('http://maps.googleapis.com/maps/api/geocode/json?latlng='+clinApps.geo.coords.latitude+','+clinApps.geo.coords.longitude).then(function(x){
+                    if(x.status==="OK"){
+                        x.results.forEach(function(xi){
+                            if(xi.types.join()=="street_address"){
+                                currentFormatedAddress.textContent=xi.formatted_address
+                                clinApps.geo.address=xi.formatted_address
+                                xi.address_components.forEach(function(xii){
+                                    if(xii.types.join()=="postal_code"){
+                                        clinApps.geo.zip=xii.long_name
+                                        locationZip.value=xii.long_name
+                                    }
+                                })
+                                //console.log(xi)
+                            }
+                            
+
+                        })
+                        4
+                    }
+                    4
+                })
+
+            })
+        }
         // digest data
         clinApps.app.findadoc.tab={}
         var parms = Object.getOwnPropertyNames(clinApps.app.findadoc.docs[0])
@@ -60,12 +95,27 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
                 op.textContent=s
                 specialitySelect.appendChild(op)
             })
-            
-
         },10) 
+        // Index Insurance
+        setTimeout(function(){
+            var allVals=[]
+            clinApps.app.findadoc.tab.INSURANCE.forEach(function(v){
+                if(v){
+                var vv = v.replace('<li>','').replace(/<\/li>$/,'').split('</li><li>')
+                    vv.forEach(function(vi){
+                        allVals.push(trailBlank(vi))
+                    })
+                }        
+            })
+            clinApps.app.findadoc.Ind.Insurance=jmat.unique(allVals).sort()
+            clinApps.app.findadoc.Ind.Insurance.forEach(function(s){
+                var op = document.createElement('option')
+                op.textContent=s
+                insuranceSelect.appendChild(op)
+            })
 
-
-        
+            4
+        },20)
 
 
         4
