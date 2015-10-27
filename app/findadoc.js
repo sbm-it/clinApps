@@ -74,8 +74,24 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
                 })
                 changed=true
             }
-            if(distanceCheck){ //resort by distance to current geo
-                
+            if(distanceCheck.checked&&(clinApps.geo)){ //resort by distance to current geo
+                // calculate the distance of each doc to the target clinAppls.geo.location
+                d=[]
+                docs.forEach(function(doc,i){ // at latitude 40 ...
+                    if(doc.geoloc){
+                        d[i]=Math.sqrt(Math.pow(63*(doc.geoloc.lat-clinApps.geo.location.lat),2)+Math.pow(63*(doc.geoloc.lng-clinApps.geo.location.lng),2))
+                    }else{
+                        d[i]=1000 // indicates NaN really
+                    }
+                })
+                dd=jmat.sort(d)
+                docsorted=[]
+                docs.forEach(function(di,i){
+                    docsorted[i]=docs[dd[1][i]]
+                    docsorted[i].d=dd[0][i]
+                })
+                docs=docsorted
+                4
             }
             if(changed){
                 listDocs(docs)
@@ -88,10 +104,48 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
                 trimDocs()
             }
         }
-        specialityCheck.onclick=specialitySelect.onchange=insuranceCheck.onclick=insuranceSelect.onchange=trimDocs
+        specialityCheck.onclick=specialitySelect.onchange=insuranceCheck.onclick=insuranceSelect.onchange=insuranceCheck.onclick=distanceCheck.onclick=trimDocs
         setTimeout(function(){
             specialityCheck.click()
         },100)
+
+        // GEO
+        var getGeo=function(q){
+                $.getJSON('http://maps.googleapis.com/maps/api/geocode/json?'+q).then(function(x){
+                    if(x.status==="OK"){
+                        x.results.forEach(function(xi){
+                            if((xi.types.join()=="street_address")||(x.results.length==1)){
+                                currentFormatedAddress.textContent=xi.formatted_address
+                                currentFormatedAddress.style.color='green'
+                                clinApps.geo={location:xi.geometry.location}
+                                xi.address_components.forEach(function(xii){
+                                    if(xii.types.join()=="postal_code"){
+                                        clinApps.geo.zip=xii.long_name
+                                        locationZip.value=xii.long_name
+                                    }
+                                })
+                                if(distanceCheck.checked){trimDocs()}
+                                //console.log(xi)
+                            }
+                        })
+                        4
+                    }
+                    4
+                })
+        }
+
+
+        // GEO
+
+
+
+
+        //https://maps.googleapis.com/maps/api/geocode/json?address=11790
+        locationZip.onkeyup=function(evt){
+            if(this.value.length==5){
+                getGeo('address='+this.value)
+            }
+        }
         locationCurrent.onclick=function(){
             locationCurrent.disabled=true
             locationCurrent.style.color='orange'
@@ -99,29 +153,7 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
                 locationCurrent.style.color='green'
                 clinApps.geo=g
                 locationCurrent.disabled=false
-                $.getJSON('http://maps.googleapis.com/maps/api/geocode/json?latlng='+clinApps.geo.coords.latitude+','+clinApps.geo.coords.longitude).then(function(x){
-                    if(x.status==="OK"){
-                        x.results.forEach(function(xi){
-                            if(xi.types.join()=="street_address"){
-                                currentFormatedAddress.textContent=xi.formatted_address
-                                currentFormatedAddress.style.color='green'
-                                clinApps.geo.address=xi.formatted_address
-                                xi.address_components.forEach(function(xii){
-                                    if(xii.types.join()=="postal_code"){
-                                        clinApps.geo.zip=xii.long_name
-                                        locationZip.value=xii.long_name
-                                    }
-                                })
-                                //console.log(xi)
-                            }
-                            
-
-                        })
-                        4
-                    }
-                    4
-                })
-
+                getGeo('latlng='+clinApps.geo.coords.latitude+','+clinApps.geo.coords.longitude)
             })
         }
         // digest data
