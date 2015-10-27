@@ -20,14 +20,78 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
         //h += '<tr><td><h4 style="color:maroon">Insurance</h4></td><td id="insurance">...</td></tr>'
         //h += '<tr><td><h4 style="color:maroon">Location</h4></td><td id="location">...</td></tr>'
         //h += '</table>'
-        var h = '<h4 style="color:maroon"><input type="radio" id="specialityRadio"> Speciality <select id="specialitySelect"></select></h4>'
-        h += '<h4 style="color:maroon"> <input type="radio" id="insuranceRadio"> Insurance <select id="insuranceSelect"></select></h4>'
-        h += '<h4 style="color:maroon"> <input type="radio" id="distanceRadio">By distance to Zip <input id="locationZip" size=5 style="color:navy"> <button id="locationCurrent" style="color:red">current</button></h4><span id="currentFormatedAddress"></span>'
+        var h = '<h4 style="color:maroon"><input type="checkbox" id="specialityCheck"> Speciality <select id="specialitySelect"></select></h4>'
+        h += '<h4 style="color:maroon"> <input type="checkbox" id="insuranceCheck"> Insurance <select id="insuranceSelect"></select></h4>'
+        h += '<h4 style="color:maroon"> <input type="checkbox" id="distanceCheck"> By distance to Zip <input id="locationZip" size=5 style="color:navy"> <button id="locationCurrent" style="color:red">current</button></h4><span id="currentFormatedAddress"></span>'
+        h += '<p id=listDocsHere></p><p>max :<input size=3 value=10 id="nMaxDocs">'
         appSpace.innerHTML=h
-        var listDocs=function(){ // queries results
-            var speciality = specialitySelect.value
-            var insurance = insuranceSelect.value
+        var listDocs=function(docs){
+            //console.log(docs)
+            listDocsHere.innerHTML='' // clear listDocs
+            var nMax=parseInt(nMaxDocs.value)
+            var n = Math.min(docs.length,nMax)
+            for(var i=0 ; i<n ; i++){
+                var li = document.createElement('p')
+                li.i=docs[i].i // .i is the index in the full set
+                li.innerHTML=(i+1)+'. '+docs[i].LASTNAME+', '+docs[i].FIRSTNAME+' ('+docs[i].SPECIALTY.replace(/<br \/>$/,'').replace(/<br \/>/g,', ')+') '
+                var sp = document.createElement('span')
+                sp.textContent='+'
+                sp.style.color='blue'
+                sp.onclick=function(){
+                    if(this.textContent=='+'){
+                        this.textContent='-'
+                        var pre=document.createElement('pre')
+                        pre.innerHTML=JSON.stringify(JSON.stringify(clinApps.app.findadoc.docs[parseInt(this.parentElement.i)],null,3)).replace(/\\n/g,'<br />').replace(/\\/g,'').slice(1,-1)
+                        this.appendChild(pre)
+                    }else{
+                        this.textContent='+'
+                    }
+                    
+                }
+                li.appendChild(sp)
+                listDocsHere.appendChild(li)
+
+            }
+            return docs
         }
+        var trimDocs=function(){ // queries results and redisplays them
+            var docs = clinApps.app.findadoc.docs
+            docs.forEach(function(d,i){docs[i].i=i}) // keeping index
+            var changed=false
+            if(specialityCheck.checked){
+                docs=docs.filter(function(d){
+                    return d.SPECIALTY.match(specialitySelect.value)
+                })
+                changed=true
+            }
+            if(insuranceCheck.checked){
+                docs=docs.filter(function(d){
+                    if(!d.INSURANCE){
+                        return false
+                    } else{
+                        return d.INSURANCE.match(insuranceSelect.value)
+                    }                
+                })
+                changed=true
+            }
+            if(distanceCheck){ //resort by distance to current geo
+                
+            }
+            if(changed){
+                listDocs(docs)
+            }
+            //return docs
+        }
+        trimDocs() // first run
+        nMaxDocs.onkeyup=function(evt){
+            if(evt.keyCode==13){
+                trimDocs()
+            }
+        }
+        specialityCheck.onclick=specialitySelect.onchange=insuranceCheck.onclick=insuranceSelect.onchange=trimDocs
+        setTimeout(function(){
+            specialityCheck.click()
+        },100)
         locationCurrent.onclick=function(){
             locationCurrent.disabled=true
             locationCurrent.style.color='orange'
@@ -40,6 +104,7 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
                         x.results.forEach(function(xi){
                             if(xi.types.join()=="street_address"){
                                 currentFormatedAddress.textContent=xi.formatted_address
+                                currentFormatedAddress.style.color='green'
                                 clinApps.geo.address=xi.formatted_address
                                 xi.address_components.forEach(function(xii){
                                     if(xii.types.join()=="postal_code"){
@@ -78,14 +143,14 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
             if(str.slice(-1)==" "){
                 return trailBlank(str.slice(0,-1))
             }else{
-                return str
+                return str.replace(/<br \/>$/,'')
             }
         }
         // Index Speciality first
         setTimeout(function(){
             var allVals=[]
-            clinApps.app.findadoc.tab.CERT.forEach(function(c){
-                c.split('<br>').forEach(function(ci){
+            clinApps.app.findadoc.tab.SPECIALTY.forEach(function(c){
+                c.split('<br />').forEach(function(ci){
                     allVals.push(trailBlank(ci))
                 })
             })
@@ -313,3 +378,6 @@ $.getJSON('data/SBMdocs.json',function(x){
 */
 
 
+
+
+log=function(x){if(!x){x=this};console.log(x)}
