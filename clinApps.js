@@ -5,6 +5,7 @@ clinApps= function(){
     clinApps.loadApps()
     //clinApps.msg('loading apps ...')
     clinApps.getHash()
+    //clinAppsHead2.hidden=true
     //clinAppsMsg.hidden=true
 }
 clinApps.app={} // store app specific material here
@@ -16,32 +17,7 @@ clinApps.msg=function(txt,clr){
     clinAppsMsg.innerHTML=txt
 }
 
-// load apps
-clinApps.loadApps=function(){
-    //if(document.getElementById('msgIcon')){
-    msgIcon.className="fa fa-home"
-    clinApps.msg('SBM App Store')
-    //} 
-    appSpace.innerHTML='' // clean it first
-    // load json manifest
-    $.getJSON('app/apps.json',function(x){
-        clinApps.manif={}
-        x.forEach(function(xi,i){
-            clinApps.manif[xi.name]=xi
-            clinApps.assembleApp(xi)
-        })
-        //clinApps.msg('SBM appstore','green')
-        clinAppsHead.hidden=false
-    })
-}
-
-// load jobs
-clinApps.getHash=function(){
-    if(location.hash.length>0){
-        clinApps.getScript(location.hash.slice(1))
-    }
-}
-
+// assemble an app UI
 clinApps.assembleApp=function(x){
     //var 
     img = document.createElement('img')
@@ -52,8 +28,33 @@ clinApps.assembleApp=function(x){
         clinApps.getScript(x.onclick)
         //$.getScript(x.onclick)
         clinApps.msg(x.description,'green')
+        //clinAppsHead2.hidden=false
+        //clinAppsHead.hidden=true
     }
     
+}
+
+// load apps
+clinApps.loadApps=function(){
+    //if(document.getElementById('msgIcon')){
+    msgIcon.className="fa fa-home"
+    clinApps.msg('SBM App Store')
+    appSpace.innerHTML='' // clean it first
+    Object.getOwnPropertyNames(clinApps.manif).forEach(function(a){
+        clinApps.assembleApp(clinApps.manif[a])
+    })
+    //} 
+    
+}
+
+// load jobs
+clinApps.getHash=function(){
+    if(location.hash.length>0){
+        if(!location.hash.match('.js')){
+            location.hash='app/'+location.hash.slice(1)+'.js'  // for example http://sbm-it.github.io/clinApps/#info
+        }
+        clinApps.getScript(location.hash.slice(1))
+    }
 }
 
 clinApps.getScript=function(src){ // like $.getScript but loads it into the head
@@ -92,7 +93,17 @@ clinApps.localforage=function(uri,fun){ // try localforage first, if it fails, i
 
 // ini
 $( document ).ready(function() {
-    clinApps()
+    // load json manifest
+    $.getJSON('app/apps.json',function(x){
+        clinApps.manif={}
+        x.forEach(function(xi,i){
+            clinApps.manif[xi.name]=xi
+            //clinApps.assembleApp(xi)
+        })
+        //clinApps.msg('SBM appstore','green')
+        clinAppsHead.hidden=false
+        clinApps() // <-- it all starts here
+    })   
 });
 
 // MIS

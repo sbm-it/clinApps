@@ -1,16 +1,16 @@
 [
 	{
-		"name":"findadoc",
-		"description":"Find a Stony Brook Medicine Doctor",
-		"icon":"app/findadoc2.png",
-		"onclick":"app/findadoc.js",
-		"fa":"fa-user-md"
-	},
-	{
 		"name":"info",
 		"description":"Information about app store",
 		"icon":"app/info.png",
 		"onclick":"app/info.js",
 		"fa":"fa-info-circle"
+	},
+	{
+		"name":"findadoc",
+		"description":"Find a Stony Brook Medicine Doctor",
+		"icon":"app/findadoc2.png",
+		"onclick":"app/findadoc.js",
+		"fa":"fa-user-md"
 	}
 ]
