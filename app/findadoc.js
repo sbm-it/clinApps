@@ -23,7 +23,7 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
         var h = '<h4 style="color:maroon"><input type="checkbox" id="specialityCheck"> Speciality <select id="specialitySelect"></select></h4>'
         h += '<h4 style="color:maroon"> <input type="checkbox" id="insuranceCheck"> Insurance <select id="insuranceSelect"></select></h4>'
         h += '<h4 style="color:maroon"> <input type="checkbox" id="distanceCheck"> By distance to Zip <input id="locationZip" size=5 style="color:navy"> <button id="locationCurrent" style="color:red">current</button></h4><span id="currentFormatedAddress"></span>'
-        h += '<p id=listDocsHere></p><p>max :<input size=3 value=10 id="nMaxDocs">'
+        h += '<p id=listDocsHere></p><p>max :<input size=3 value=20 id="nMaxDocs">'
         appSpace.innerHTML=h
         var listDocs=function(docs){
             //console.log(docs)
@@ -39,14 +39,35 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
                 sp.style.color='blue'
                 sp.onclick=function(){
                     if(this.textContent=='+'){
+                        doc=clinApps.app.findadoc.docs[parseInt(this.parentElement.i)]
                         this.textContent='-'
+                        var docDiv = document.createElement('div') // doc div
+                        var im = document.createElement('img')
+                        jsonpCallback=function(x){ // this is soooo wrong :-(
+                            im.src='http://www.stonybrookmedicine.edu/webfiles/physician-pics/'+x[0].PICTURE
+                            if(im.src=='http://www.stonybrookmedicine.edu/webfiles/physician-pics/placeholder.png'){
+                                setTimeout(function(){
+                                    im.hidden=true
+                                },2000)
+                            }
+                        }
+                        $.getScript('http://findadoc.uhmc.sunysb.edu/fadp/fadprofile-drupal.asp?pid='+doc.ID)
+                        //if(doc.PICTURE.match('http')){
+                        //    im.src=doc.PICTURE
+                        //}else{
+                        //    im.src='http://www.stonybrookmedicine.edu/webfiles/physician-pics/'+doc.PICTURE
+                        //}
+                        docDiv.appendChild(im)
+                        $('<p>working on formating all of this:</p>').appendTo(docDiv)
+                        this.appendChild(docDiv)
+                        
                         var pre=document.createElement('pre')
-                        pre.innerHTML=JSON.stringify(JSON.stringify(clinApps.app.findadoc.docs[parseInt(this.parentElement.i)],null,3)).replace(/\\n/g,'<br />').replace(/\\/g,'').slice(1,-1)
+                        pre.innerHTML=JSON.stringify(JSON.stringify(doc,null,3)).replace(/\\n/g,'<br />').replace(/\\/g,'').slice(1,-1)
                         this.appendChild(pre)
                     }else{
                         this.textContent='+'
                     }
-                    
+                    4
                 }
                 li.appendChild(sp)
                 listDocsHere.appendChild(li)
@@ -282,7 +303,7 @@ clinApps.app.findadoc.fun=(function(){
         jsonpCallback=function(xj){ // same ugly frozen jsonp callback :-(
             Object.getOwnPropertyNames(xj[0]).forEach(function(p){
                 xi[p]=xj[0][p]
-                if(xi.PICTURE.match(/\.jpg/i)){
+                if(!xi.PICTURE.match(/\.jpg/i)){
                     xi.PICTURE='http://www.stonybrookmedicine.edu/webfiles/physician-pics/placeholder.png'
                 }
                 clinApps.getSbmDoctors.docs[i]=xi
