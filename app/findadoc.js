@@ -132,7 +132,7 @@ clinApps.app.findadoc.fun=function(){ // find a doc action
 
         // GEO
         var getGeo=function(q){
-                $.getJSON('http://maps.googleapis.com/maps/api/geocode/json?'+q).then(function(x){
+                $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?'+q).then(function(x){
                     if(x.status==="OK"){
                         x.results.forEach(function(xi){
                             if((xi.types.join()=="street_address")||(x.results.length==1)){
