@@ -81,6 +81,7 @@ clinApps.localforage=function(uri,fun){ // try localforage first, if it fails, i
                       })
                  }else{
                      console.log('no indexedDB')
+                     fun(x)
                  }
             })
             
